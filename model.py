@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-# Temporarily leave PositionalEncoding module here. Will be moved somewhere else.
 class PositionalEncoding(nn.Module):
     r"""Inject some information about the relative or absolute position of the tokens in the sequence.
         The positional encodings have the same dimension as the embeddings, so that the two can be summed.
@@ -68,14 +67,8 @@ class Transformer(nn.Module):
         super(Transformer, self).__init__()
 
         self.embedding = nn.Embedding(alpha, d_model)
-
-        self.pe = PositionalEncoding(
-            d_model=d_model, dropout=dropout, max_len=5000
-        )
-
-        decode_layer = nn.TransformerDecoderLayer(
-            d_model, n_heads, dim_feedforward=d_ff, dropout=dropout
-        )
+        self.pe = PositionalEncoding(d_model=d_model, dropout=dropout, max_len=5000)
+        decode_layer = nn.TransformerDecoderLayer(d_model, n_heads, dim_feedforward=d_ff, dropout=dropout)
         self.transformer = nn.TransformerDecoder(decode_layer, n_layers)
         self.linear = nn.Linear(d_model, alpha)
 

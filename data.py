@@ -75,7 +75,20 @@ def load_train_test_dataset(
 
 
 def repeated(alpha: str, period: int, length: int) -> Iterable[str]:
-    """Generate all possible repeated strings of a given length."""
+    """Generate all possible repeated strings of a given length.
+
+    >>> for data in repeated(alpha="012", period=2, length=8):
+    >>>     print(data)
+    00000000
+    01010101
+    02020202
+    10101010
+    11111111
+    12121212
+    20202020
+    21212121
+    22222222
+    """
     times = (length + period - 1) // period
     for prefix_t in product(alpha, repeat=period):
         prefix = "".join(prefix_t)

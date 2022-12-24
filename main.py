@@ -13,6 +13,7 @@ from model import Transformer
 def main(epochs: int = 100, batch_size: int = 32, lr: float = 0.01):
     """Train and evaluate a transformer model."""
     gn = partial(repeated, alpha="0123456789", period=4, length=15)
+
     x_train, y_train, x_test, y_test, alpha = load_train_test_dataset(gn)
 
     n_alpha = len(alpha)
@@ -62,4 +63,5 @@ def main(epochs: int = 100, batch_size: int = 32, lr: float = 0.01):
 
 
 if __name__ == "__main__":
-    main()
+    for data in repeated(alpha="012", period=2, length=8):
+        print(data)
