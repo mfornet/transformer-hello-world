@@ -67,15 +67,25 @@ class Transformer(nn.Module):
         super(Transformer, self).__init__()
 
         self.embedding = nn.Embedding(alpha, d_model)
-        self.pe = PositionalEncoding(d_model=d_model, dropout=dropout, max_len=5000)
-        decode_layer = nn.TransformerDecoderLayer(d_model, n_heads, dim_feedforward=d_ff, dropout=dropout)
+        self.pe = PositionalEncoding(
+            d_model=d_model, dropout=dropout, max_len=5000
+        )
+        decode_layer = nn.TransformerDecoderLayer(
+            d_model,
+            n_heads,
+            dim_feedforward=d_ff,
+            dropout=dropout,
+            batch_first=True,
+        )
         self.transformer = nn.TransformerDecoder(decode_layer, n_layers)
         self.linear = nn.Linear(d_model, alpha)
 
     def forward(self, src: torch.Tensor):
         src = self.embedding(src)
         src = self.pe(src)
-        # TODO: pass src_mask to make sure that the model does not "cheat", and it can only see the previous tokens.
-        output = self.transformer(src, src)
+
+        mask = torch.tril(torch.ones(src.shape[1], src.shape[1]))
+        output = self.transformer(src, src, memory_mask=mask, tgt_mask=mask)
+
         output = self.linear(output)
         return F.log_softmax(output, dim=-1)
